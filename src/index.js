@@ -16,8 +16,17 @@ function isAllTrue(array, fn) {
     if (!(typeof fn === 'function')) {
         throw new Error('fn is not a function');
     }
+    function allTrue() {
+        for (let i = 0; i < array.length; i++) {
+            if (fn(array[i]) === false) {
+                return false;
+            }
+        }
 
-    return array.every(fn);
+        return true;
+    }
+
+    return allTrue();
 }
 
 /*
@@ -32,14 +41,25 @@ function isAllTrue(array, fn) {
 function isSomeTrue(array, fn) {
     if (!(array instanceof Array && array.length !== 0)) {
 
-        throw new Error ('empty array');
+        throw new Error('empty array');
     }
     if (!(typeof fn === 'function')) {
 
-        throw new Error ('fn is not a function');
+        throw new Error('fn is not a function');
     }
 
-    return array.some(fn);
+    function someTrue() {
+        for (let i = 0; i < array.length; i++) {
+            if (fn(array[i]) === true) {
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    return someTrue();
 }
 
 /*
@@ -93,7 +113,7 @@ function returnBadArguments(fn) {
  */
 function calculator(number = 0) {
 
-    if (!(typeof number === 'number')) {
+    if (!(typeof number === 'number') && isFinite(number) === false) {
         throw new Error('number is not a number')
     }
 
@@ -113,7 +133,7 @@ function calculator(number = 0) {
         div: function () {
             let args = [...arguments];
 
-            for (let i = 0; i<args.length; i++) {
+            for (let i = 0; i < args.length; i++) {
                 if (args[i] === 0) {
                     throw new Error('division by 0');
                 }
