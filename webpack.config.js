@@ -7,14 +7,17 @@ let path = require('path');
 
 loaders.push({
     test: /\.css$/,
-    loader: ExtractTextPlugin.extract({
-        fallbackLoader: 'style-loader',
-        loader: 'css-loader'
+    use: ExtractTextPlugin.extract({
+        fallback: 'style-loader',
+        use: 'css-loader'
     })
 });
 
 module.exports = {
-    entry: './src/index.js',
+    entry: {
+        main: './src/index.js',
+        dnd: './src/dnd.js'
+    },
     output: {
         filename: '[name].[hash].js',
         path: path.resolve('dist')
@@ -24,16 +27,23 @@ module.exports = {
         loaders
     },
     plugins: [
-        new webpack.optimize.UglifyJsPlugin({
-            sourceMap: true,
-            compress: {
-                drop_debugger: false
-            }
-        }),
+        // new webpack.optimize.UglifyJsPlugin({
+        //     sourceMap: true,
+        //     compress: {
+        //         drop_debugger: false
+        //     }
+        // }),
         new ExtractTextPlugin('styles.css'),
         new HtmlPlugin({
-            title: 'Loft School sample project',
-            template: 'index.hbs'
+            title: 'Main Homework',
+            template: 'index.hbs',
+            chunks: ['main']
+        }),
+        new HtmlPlugin({
+            title: 'Div Drag And Drop',
+            template: 'dnd.hbs',
+            filename: 'dnd.html',
+            chunks: ['dnd']
         }),
         new CleanWebpackPlugin(['dist'])
     ]
