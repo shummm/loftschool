@@ -46,7 +46,7 @@ describe('ДЗ 6.2 - Фильтр городов', () => {
                         assert.isTrue(town.hasOwnProperty('name'), 'город должен иметь свойтво name');
 
                         if (i) {
-                            assert.isBelow(towns[i - 1].name, town.name, 'города должны быть отсортированы');
+                            assert.isTrue(towns[i - 1].name < town.name, 'города должны быть отсортированы');
                         }
                     });
                     done();

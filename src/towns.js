@@ -28,6 +28,11 @@
  * homeworkContainer.appendChild(...);
  */
 let homeworkContainer = document.querySelector('#homework-container');
+let loadingBlock = homeworkContainer.querySelector('#loading-block');
+let filterBlock = homeworkContainer.querySelector('#filter-block');
+let filterInput = homeworkContainer.querySelector('#filter-input');
+let filterResult = homeworkContainer.querySelector('#filter-result');
+let townsPromise;
 
 /**
  * Функция должна загружать список городов из https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
@@ -36,7 +41,50 @@ let homeworkContainer = document.querySelector('#homework-container');
  * @return {Promise<Array<{name: string}>>}
  */
 function loadTowns() {
+    let loader = {
+        promise: null,
+        load() {
+            if (this.promise) {
+                return this.promise;
+            }
+
+            let result = [];
+
+            this.promise = new Promise((resolve) => {
+                let xhr = new XMLHttpRequest();
+
+                xhr.open('get', 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json');
+                xhr.addEventListener('load', () => {
+                    result = JSON.parse(xhr.response);
+                    result.sort((a, b) => {
+                        if (a.name > b.name) {
+                            return 1;
+                        }
+                        if (a.name < b.name) {
+                            return -1;
+                        }
+
+                        return 0;
+                    });
+                    resolve(result);
+                });
+                xhr.send();
+            });
+            this.promise.then((response) => {
+                loadingBlock.style.display = 'none';
+                filterBlock.style.display = 'block';
+
+                return response;
+            });
+
+            return this.promise;
+        }
+    };
+
+    return loader.load();
 }
+
+townsPromise = loadTowns();
 
 /**
  * Функция должна проверять встречается ли подстрока chunk в строке full
@@ -52,15 +100,53 @@ function loadTowns() {
  * @return {boolean}
  */
 function isMatching(full, chunk) {
+    let result = [];
+
+    chunk = chunk.toLowerCase();
+    full.forEach((town) => {
+        if (town.includes(chunk)) {
+            result.push(town);
+        }
+    });
+
+    return result;
 }
 
-let loadingBlock = homeworkContainer.querySelector('#loading-block');
-let filterBlock = homeworkContainer.querySelector('#filter-block');
-let filterInput = homeworkContainer.querySelector('#filter-input');
-let filterResult = homeworkContainer.querySelector('#filter-result');
-let townsPromise;
+let towns = [];
 
-filterInput.addEventListener('keyup', function() {
+townsPromise.then((arr) => {
+
+    arr.forEach((obj, i) => {
+        towns[i] = obj.name.toLowerCase();
+    });
+
+});
+
+filterInput.addEventListener('keyup', function (e) {
+    let chunk = e.target.value;
+    let filterTowns = isMatching(towns, chunk);
+    let ul = document.createElement('ul');
+
+    if (filterBlock.children.length > 0) {
+        for (let i = 0; i < filterBlock.children.length; i++) {
+            let el = filterBlock.children[i];
+
+            if (el.tagName === 'UL') {
+                el.remove();
+            }
+        }
+    }
+    if (chunk.length > 0) {
+        filterBlock.appendChild(ul);
+        if (filterTowns.length > 0) {
+            filterTowns.forEach((town) => {
+                let li = document.createElement('li');
+
+                li.textContent = town;
+                ul.appendChild(li);
+            })
+        }
+    }
 });
 
 export {

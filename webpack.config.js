@@ -7,19 +7,19 @@ let path = require('path');
 
 loaders.push({
     test: /\.css$/,
-    loader: ExtractTextPlugin.extract({
-        fallbackLoader: 'style-loader',
-        loader: 'css-loader'
+    use: ExtractTextPlugin.extract({
+        fallback: 'style-loader',
+        use: 'css-loader'
     })
 });
 
 module.exports = {
     entry: {
         main: './src/index.js',
-        townss: './src/towns.js'
+        towns: './src/towns.js'
     },
     output: {
-        filename: '[hash].js',
+        filename: '[name].[hash].js',
         path: path.resolve('dist')
     },
     devtool: 'source-map',
@@ -27,12 +27,12 @@ module.exports = {
         loaders
     },
     plugins: [
-        new webpack.optimize.UglifyJsPlugin({
-            sourceMap: true,
-            compress: {
-                drop_debugger: false
-            }
-        }),
+        // new webpack.optimize.UglifyJsPlugin({
+        //     sourceMap: true,
+        //     compress: {
+        //         drop_debugger: false
+        //     }
+        // }),
         new ExtractTextPlugin('styles.css'),
         new HtmlPlugin({
             title: 'Main Homework',
