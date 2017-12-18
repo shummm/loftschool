@@ -50,31 +50,42 @@ function loadTowns() {
 
             let result = [];
 
-            this.promise = new Promise((resolve) => {
+            this.promise = new Promise((resolve, reject) => {
                 let xhr = new XMLHttpRequest();
 
                 xhr.open('get', 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json');
                 xhr.addEventListener('load', () => {
-                    result = JSON.parse(xhr.response);
-                    result.sort((a, b) => {
-                        if (a.name > b.name) {
-                            return 1;
-                        }
-                        if (a.name < b.name) {
-                            return -1;
-                        }
+                    if (xhr.status === 200) {
+                        result = JSON.parse(xhr.response);
+                        result.sort((a, b) => {
+                            if (a.name > b.name) {
+                                return 1;
+                            }
+                            if (a.name < b.name) {
+                                return -1;
+                            }
 
-                        return 0;
-                    });
-                    resolve(result);
+                            return 0;
+                        });
+                        resolve(result);
+                    } else {
+                        reject();
+                    }
                 });
                 xhr.send();
             });
-            this.promise.then((response) => {
+            this.promise.then(response => {
                 loadingBlock.style.display = 'none';
                 filterBlock.style.display = 'block';
 
                 return response;
+            }).catch(() => {
+                let button = document.createElement('button');
+
+                loadingBlock.style.display = 'none';
+                button.textContent = 'Reload';
+                homeworkContainer.appendChild(button);
+                button.addEventListener('click', () => window.location.reload())
             });
 
             return this.promise;
@@ -104,7 +115,7 @@ function isMatching(full, chunk) {
 
     chunk = chunk.toLowerCase();
     full.forEach((town) => {
-        if (town.includes(chunk)) {
+        if (town.toLowerCase().includes(chunk)) {
             result.push(town);
         }
     });
@@ -117,7 +128,7 @@ let towns = [];
 townsPromise.then((arr) => {
 
     arr.forEach((obj, i) => {
-        towns[i] = obj.name.toLowerCase();
+        towns[i] = obj.name;
     });
 
 });
