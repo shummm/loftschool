@@ -1,0 +1,182 @@
+@import url('https://fonts.googleapis.com/css?family=Fira+Sans');
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Fira Sans', sans-serif;
+}
+/*------scroll-------*/
+::-webkit-scrollbar {
+    width: 3px;
+}
+::-webkit-scrollbar-thumb {
+    background: #c4c4c4;
+}
+/*------header------*/
+.main {
+    display: block;
+    width: 620px;
+    height: 490px;
+    overflow: hidden;
+    border-radius: 15px;
+}
+
+.header {
+    display: inline-block;
+    background-color: #ff8663;
+    margin: 0;
+    padding: 0;
+    height: 45px;
+    width: 620px;
+}
+
+.header p {
+    margin: 13px 15px 13px 15px;
+    font-size: 16px;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.header .fa-times {
+    float: right;
+}
+
+.filter-block {
+    height: 45px;
+    display: block;
+    background-color: #f0f0f0;
+}
+
+.filter-friends input {
+    background-image: url(../img/zoom.png);
+    background-repeat: no-repeat;
+    background-position: 5px;
+    height: 25px;
+    width: 260px;
+    border-radius: 25px;
+    margin-left: 15px;
+    margin-top: 10px;
+    float: left;
+    outline: none;
+    border: none;
+    font-size: 12px;
+    padding-left: 25px;
+}
+
+.filter-sort input {
+    height: 25px;
+    width: 275px;
+    border-radius: 25px;
+    margin-right: 15px;
+    margin-top: 10px;
+    float: right;
+    outline: none;
+    border: none;
+    font-size: 12px;
+    padding-left: 10px;
+}
+
+/*-----content----*/
+.content {
+    display: block;
+    height: 355px;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.friend-list {
+    width: 279px;
+    height: 355px;
+    border-right: 1px solid #f0f0f0;
+    padding-right: 15px;
+    overflow: auto;
+    float: left;
+}
+
+.avatar {
+    border-radius: 100px;
+    border: 3px solid #f0f0f0;
+    box-shadow: 0 0 7px #666;
+    float: left;
+}
+
+.friend-sorted {
+    width: 279px;
+    height: 355px;
+    padding-left: 15px;
+    overflow: auto;
+    float: left;
+}
+
+.header-friend-list {
+    height: 32px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.header-friend-sorted {
+    height: 32px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.header-friend-list p {
+    font-size: 12px;
+    padding-top: 15px;
+    font-weight: bold;
+}
+
+.header-friend-sorted p {
+    font-size: 12px;
+    padding-top: 15px;
+    font-weight: bold;
+}
+
+.friends-block {
+    display: block;
+    height: 59px;
+    width: 279px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.friends-block p {
+    font-size: 12px;
+    font-weight: bold;
+    padding-top: 22px;
+    padding-left: 65px;
+}
+
+.friends-block p .fa-plus {
+    padding-right: 6px;
+    color: #c4c4c4;
+    float: right;
+}
+
+.friends-block p .fa-times {
+    padding-right: 6px;
+    color: #c4c4c4;
+    float: right;
+}
+
+.friends-block:hover {
+    background-color: #f0f0f0;
+}
+
+/*-----footer------*/
+.footer {
+    display: block;
+    height: 45px;
+    background-color: #f0f0f0;
+}
+
+.footer button {
+    background-color: #ff8663;
+    float: right;
+    height: 30px;
+    width: 87px;
+    margin-top: 8px;
+    margin-right: 7px;
+    border-radius: 10px;
+    border: none;
+    color: #ffffff;
+    font-size: 12px;
+    outline: none;
+}
