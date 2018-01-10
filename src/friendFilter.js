@@ -51,82 +51,73 @@ function callAPI(method, params) {
         friends.items.forEach(item => {
             allFriends.push(item);
         });
-        if (localStorage.data) {
-                let data = JSON.parse(localStorage.data);
-                data.forEach(e => {
-                    let match = `${e.last_name} ${e.first_name}`;
+        if (localStorage.getItem('data')) {
+            let data = JSON.parse(localStorage.getItem('data'));
 
-                    moveFriendToArray(allFriends, filterFriends, listFriends, filterListFriends, match);
-                });
-            renderList(listFriends);
-            }
-        render(allFriends);
+            data.forEach(el => {
+                let dataName = `${el.last_name} ${el.first_name}`;
+
+                listFriends.push(el);
+                allFriends.forEach(elm => {
+                    let name = `${elm.last_name} ${elm.first_name}`;
+
+                    if (dataName === name) {
+                        let idx = allFriends.indexOf(elm);
+
+                        if (idx !== 1) {
+                            allFriends.splice(idx, 1);
+                        }
+                    }
+                })
+            });
+
+        }
+        render(allFriends, filterFriends, listFriends, filterListFriends);
     } catch (e) {
         console.error(e);
     }
 })();
 
-/*Сортировать по фамилии*/
-function sortLastName(val) {
-    val.sort(function (a, b) {
-        if (a.last_name > b.last_name) {
-            return 1;
-        }
-        if (a.last_name < b.last_name) {
-            return -1;
-        }
-
-        return 0;
-    });
-}
-
 /*Проверка на совпадение и добавление в массив*/
 function isMatching(full, chunk) {
-    if (input.value.length > 0) {
-        filterFriends = [];
-        chunk = chunk.toLowerCase();
-        full.forEach(item => {
-            let friend = {
-                name: '',
-                lastName: '',
-                avatar: ''
-            };
-            friend.first_name = `${item.first_name}`;
-            friend.id = `${item.id}`;
-            friend.last_name = `${item.last_name}`;
-            friend.photo_50 = `${item.photo_50}`;
+    if (chunk.value.length > 0) {
+        if (chunk.name === 'filter-left') {
+            chunk = chunk.value.toLowerCase();
+            filterFriends = [];
+            full.forEach(item => {
+                let friend = {
+                    name: '',
+                    lastName: '',
+                    avatar: ''
+                };
+                friend.first_name = `${item.first_name}`;
+                friend.id = `${item.id}`;
+                friend.last_name = `${item.last_name}`;
+                friend.photo_50 = `${item.photo_50}`;
 
-            if (friend.first_name.toLowerCase().includes(chunk) || friend.last_name.toLowerCase().includes(chunk)) {
-                filterFriends.push(friend);
-            }
-        });
-    } else {
-        filterFriends = [];
-    }
-}
-
-function isMatchingList(full, chunk) {
-    if (inputList.value.length > 0) {
-        filterListFriends = [];
-        chunk = chunk.toLowerCase();
-
-        full.forEach(item => {
-            let friend = {
-                name: '',
-                lastName: '',
-                avatar: ''
-            };
-            friend.first_name = `${item.first_name}`;
-            friend.id = `${item.id}`;
-            friend.last_name = `${item.last_name}`;
-            friend.photo_50 = `${item.photo_50}`;
-
-            if (friend.first_name.toLowerCase().includes(chunk) || friend.last_name.toLowerCase().includes(chunk)) {
-                filterListFriends.push(friend);
-            }
-        });
-    } else {
-        filterListFriends = [];
+                if (friend.first_name.toLowerCase().includes(chunk) || friend.last_name.toLowerCase().includes(chunk) || `${friend.first_name.toLowerCase()} ${friend.last_name.toLowerCase()}`.includes(chunk) || `${friend.last_name.toLowerCase()} ${friend.first_name.toLowerCase()}`.includes(chunk)) {
+                    filterFriends.push(friend);
+                }
+            });
+        }
+        if (chunk.name === 'filter-right') {
+            filterListFriends = [];
+            chunk = chunk.value.toLowerCase();
+            full.forEach(item => {
+                let friend = {
+                    name: '',
+                    lastName: '',
+                    avatar: ''
+                };
+                friend.first_name = `${item.first_name}`;
+                friend.id = `${item.id}`;
+                friend.last_name = `${item.last_name}`;
+                friend.photo_50 = `${item.photo_50}`;
+                if (friend.first_name.toLowerCase().includes(chunk) || friend.last_name.toLowerCase().includes(chunk) || `${friend.first_name.toLowerCase()} ${friend.last_name.toLowerCase()}`.includes(chunk) || `${friend.last_name.toLowerCase()} ${friend.first_name.toLowerCase()}`.includes(chunk)) {
+                    filterListFriends.push(friend);
+                }
+            });
+        }
     }
 }
 
@@ -182,6 +173,7 @@ function friendTemplateList(arr) {
         let icon = document.createElement('i');
 
         friendBlock.setAttribute('class', 'friends-block');
+        friendBlock.setAttribute('draggable', 'true');
         resultListBlock.appendChild(friendBlock);
         img.setAttribute('class', 'avatar');
         img.setAttribute('src', `${arr[i].photo_50}`);
@@ -196,142 +188,474 @@ function friendTemplateList(arr) {
 }
 
 /*Рендеринг относительно входного массива*/
-function render(arr) {
-    sortLastName(arr);
+
+function render(allFriends, filterFriends, listFriends, filterListFriends) {
     if (input.value.length > 0) {
-        friendTemplate(arr);
-    } else if (input.value.length === 0) {
+        friendTemplate(filterFriends);
+    } else {
         friendTemplate(allFriends);
     }
-}
-
-function renderList(arr) {
-    sortLastName(arr);
     if (inputList.value.length > 0) {
-        friendTemplateList(arr);
-    } else if (inputList.value.length === 0) {
+        friendTemplateList(filterListFriends);
+    } else {
         friendTemplateList(listFriends);
     }
-}
-
-/*Перемешение элементов из массива в массив*/
-function moveFriendToArray(fromAll, fromFilter, toList, toFilter, isMatch) {
-    fromAll.forEach(el => {
-        if (`${el.last_name} ${el.first_name}` === isMatch) {
-            let idx = fromAll.indexOf(el);
-            let idxx = fromFilter.indexOf(el);
-            toList.push(fromAll[idx]);
-            let str = `${fromAll[idx].last_name} ${fromAll[idx].first_name}`.toLowerCase().split('');
-            if (inputList.value.length > 0 && str.includes(inputList.value)) {
-                toFilter.push(fromAll[idx]);
-            }
-            if (idx !== -1) {
-                fromAll.splice(idx, 1);
-                fromFilter.splice(idxx, 1);
-            }
-        }
-    });
 }
 
 /*Установка события на кнопку*/
 filterBlock.addEventListener('keyup', e => {
     if (input === e.target) {
-        let chunk = e.target.value;
+        let chunk = e.target;
 
         isMatching(allFriends, chunk);
-        render(filterFriends);
     }
     if (inputList === e.target) {
-        let chunk = e.target.value;
-        isMatchingList(listFriends, chunk);
-        renderList(filterListFriends);
+        let chunk = e.target;
+
+        isMatching(listFriends, chunk);
     }
+
+    render(allFriends, filterFriends, listFriends, filterListFriends);
 });
 
 /*Установка события на добавление или удаления из списка друзей*/
 content.addEventListener('click', e => {
-    if (e.target.className === 'fa fa-plus fa-lg') {
-        e.target.className = 'fa fa-times fa-lg';
-        let match = event.target.parentNode.textContent;
-        moveFriendToArray(allFriends, filterFriends, listFriends, filterListFriends, match)
-    } else if (e.target.className === 'fa fa-times fa-lg') {
-        e.target.className = 'fa fa-plus fa-lg';
-        let match = event.target.parentNode.textContent;
-        moveFriendToArray(listFriends, filterListFriends, allFriends, filterFriends, match)
+    let col = e.target.parentNode.parentNode.parentNode;
+
+    if (col.getAttribute('id') === 'result') {
+        if (e.target.className === 'fa fa-plus fa-lg') {
+            e.target.className = 'fa fa-times fa-lg';
+            let nameFriendSend = e.target.parentNode.textContent;
+
+            if (input.value.length > 0 && inputList.value.length === 0) {
+                filterFriends.forEach(el => {
+                    let fullName = `${el.last_name} ${el.first_name}`;
+
+                    if (fullName === nameFriendSend) {
+                        let idx = filterFriends.indexOf(el);
+
+                        listFriends.push(filterFriends[idx]);
+                        if (idx !== -1) {
+                            filterFriends.splice(idx, 1);
+                        }
+                    }
+                });
+                allFriends.forEach(el => {
+                    let fullName = `${el.last_name} ${el.first_name}`;
+
+                    if (fullName === nameFriendSend) {
+                        let idx = allFriends.indexOf(el);
+
+                        if (idx !== -1) {
+                            allFriends.splice(idx, 1);
+                        }
+                    }
+                });
+            } else if (input.value.length === 0 && inputList.value.length > 0) {
+                allFriends.forEach(el => {
+                    let fullName = `${el.last_name} ${el.first_name}`;
+
+                    if (fullName === nameFriendSend) {
+                        let idx = allFriends.indexOf(el);
+
+                        listFriends.push(allFriends[idx]);
+
+                        if (idx !== -1) {
+                            allFriends.splice(idx, 1);
+                        }
+                    }
+                });
+
+                isMatching(listFriends, inputList);
+
+            } else if (input.value.length === 0 && inputList.value.length === 0) {
+                allFriends.forEach(el => {
+                    let fullName = `${el.last_name} ${el.first_name}`;
+
+                    if (fullName === nameFriendSend) {
+                        let idx = allFriends.indexOf(el);
+
+                        listFriends.push(allFriends[idx]);
+
+                        if (idx !== -1) {
+                            allFriends.splice(idx, 1);
+                        }
+                    }
+                });
+            } else if (input.value.length > 0 && inputList.value.length > 0) {
+                filterFriends.forEach(el => {
+                    let fullName = `${el.last_name} ${el.first_name}`;
+
+                    if (fullName === nameFriendSend) {
+                        let idx = allFriends.indexOf(el);
+                        let idxx = filterFriends.indexOf(el);
+
+                        listFriends.push(filterFriends[idxx]);
+
+                        if (idx !== -1) {
+                            allFriends.splice(idx, 1);
+                        }
+                        if (idxx !== -1) {
+                            filterFriends.splice(idxx, 1);
+                        }
+                    }
+                });
+                allFriends.forEach(el => {
+                    let fullName = `${el.last_name} ${el.first_name}`;
+
+                    if (fullName === nameFriendSend) {
+                        let idx = allFriends.indexOf(el);
+
+                        if (idx !== -1) {
+                            allFriends.splice(idx, 1);
+                        }
+                    }
+                });
+
+                isMatching(listFriends, inputList);
+
+            }
+        }
+    } else if (col.getAttribute('id') === 'result-list') {
+        if (e.target.className === 'fa fa-times fa-lg') {
+            e.target.className = 'fa fa-plus fa-lg';
+            let nameFriendSend = e.target.parentNode.textContent;
+
+            if (input.value.length === 0 && inputList.value.length > 0) {
+                filterListFriends.forEach(el => {
+                    let fullName = `${el.last_name} ${el.first_name}`;
+
+                    if (fullName === nameFriendSend) {
+                        let idx = filterListFriends.indexOf(el);
+
+                        allFriends.push(filterListFriends[idx]);
+
+                        if (idx !== -1) {
+                            filterListFriends.splice(idx, 1);
+                        }
+                    }
+                });
+
+                listFriends.forEach(el => {
+                    let fullName = `${el.last_name} ${el.first_name}`;
+
+                    if (fullName === nameFriendSend) {
+                        let idx = listFriends.indexOf(el);
+
+                        if (idx !== -1) {
+                            listFriends.splice(idx, 1);
+                        }
+                    }
+                });
+
+                isMatching(allFriends, input);
+
+            } else if (input.value.length > 0 && inputList.value.length === 0) {
+                listFriends.forEach(el => {
+                    let fullName = `${el.last_name} ${el.first_name}`;
+
+                    if (fullName === nameFriendSend) {
+                        let idx = listFriends.indexOf(el);
+
+                        allFriends.push(listFriends[idx]);
+
+                        if (idx !== -1) {
+                            listFriends.splice(idx, 1);
+                        }
+                    }
+                });
+
+                isMatching(allFriends, input);
+
+            } else if (input.value.length === 0 && inputList.value.length === 0) {
+                listFriends.forEach(el => {
+                    let fullName = `${el.last_name} ${el.first_name}`;
+
+                    if (fullName === nameFriendSend) {
+                        let idx = listFriends.indexOf(el);
+
+                        allFriends.push(listFriends[idx]);
+                        if (idx !== -1) {
+                            listFriends.splice(idx, 1);
+                        }
+                    }
+                });
+
+            } else if (input.value.length > 0 && inputList.value.length > 0) {
+                filterListFriends.forEach(el => {
+                    let fullName = `${el.last_name} ${el.first_name}`;
+
+                    if (fullName === nameFriendSend) {
+                        let idx = filterListFriends.indexOf(el);
+
+                        allFriends.push(filterListFriends[idx]);
+
+                        if (idx !== -1) {
+                            filterListFriends.splice(idx, 1);
+                        }
+                    }
+                });
+                listFriends.forEach(el => {
+                    let fullName = `${el.last_name} ${el.first_name}`;
+
+                    if (fullName === nameFriendSend) {
+                        let idx = listFriends.indexOf(el);
+
+                        if (idx !== -1) {
+                            listFriends.splice(idx, 1);
+                        }
+                    }
+                });
+
+                isMatching(allFriends, input);
+
+            }
+        }
     }
-    if (inputList.value.length > 0) {
-        renderList(filterListFriends);
-    } else {
-        renderList(listFriends);
-    }
-    if (input.value.length > 0) {
-        render(filterFriends);
-    } else {
-        render(allFriends);
-    }
+
+    render(allFriends, filterFriends, listFriends, filterListFriends);
+
 });
 
 /*d&d друзей*/
+let dragableBlock;
+
 content.addEventListener('dragstart', e => {
-    if (e.target.className === 'friends-block') {
-        let chunk = e.target.lastChild.textContent;
+    if (e.target.className === 'friends-block' && e.target.parentNode.getAttribute('id') === 'result') {
+        dragableBlock = e.target.parentNode.parentNode.className;
+        let nameFriend = e.target.lastChild.textContent;
+
+        e.target.style.opacity = .5;
 
         if (input.value.length > 0) {
-        } else {
-            allFriends.forEach(el => {
-                let str = `${el.last_name} ${el.first_name}`;
-
-                if (str === chunk) {
-                    e.dataTransfer.setData("text/plain", str);
+            filterFriends.forEach(el => {
+                if (`${el.last_name} ${el.first_name}` === nameFriend) {
+                    e.dataTransfer.setData("text/plain", JSON.stringify(el));
                     e.dataTransfer.effectAllowed = "move";
                 }
-            })
+            });
+        } else {
+            allFriends.forEach(el => {
+                if (`${el.last_name} ${el.first_name}` === nameFriend) {
+                    e.dataTransfer.setData("text/plain", JSON.stringify(el));
+                    e.dataTransfer.effectAllowed = "move";
+                }
+            });
+        }
+    } else if (e.target.className === 'friends-block' && e.target.parentNode.getAttribute('id') === 'result-list') {
+        dragableBlock = e.target.parentNode.parentNode.className;
+        let nameFriend = e.target.lastChild.textContent;
+
+        e.target.style.opacity = .5;
+
+        if (inputList.value.length > 0) {
+            filterListFriends.forEach(el => {
+                if (`${el.last_name} ${el.first_name}` === nameFriend) {
+                    e.dataTransfer.setData("text/plain", JSON.stringify(el));
+                    e.dataTransfer.effectAllowed = "move";
+                }
+            });
+        } else {
+            listFriends.forEach(el => {
+                if (`${el.last_name} ${el.first_name}` === nameFriend) {
+                    e.dataTransfer.setData("text/plain", JSON.stringify(el));
+                    e.dataTransfer.effectAllowed = "move";
+                }
+            });
         }
     }
-});
+}, false);
+content.addEventListener("dragend", e => {
+    e.target.style.opacity = "";
+}, false);
 content.addEventListener('dragenter', e => {
     e.preventDefault();
-});
+}, false);
 content.addEventListener('dragover', e => {
     e.preventDefault();
-});
+}, false);
 content.addEventListener('drop', e => {
     e.preventDefault();
-    let data = e.dataTransfer.getData("text/plain");
-    if (input.value.length > 0) {
-        filterFriends.forEach(el => {
-            let str = `${el.last_name} ${el.first_name}`;
+    let data = JSON.parse(e.dataTransfer.getData("text/plain"));
+    let nameFriendSend = `${data.last_name} ${data.first_name}`;
 
-            if (str === data) {
-                moveFriendToArray(allFriends, filterFriends, listFriends, filterListFriends, data);
-            }
-        })
-    } else {
-        allFriends.forEach(el => {
-            let str = `${el.last_name} ${el.first_name}`;
+    if (e.target.className === 'friend-sorted' && dragableBlock === 'friend-list') {
+        if (input.value.length > 0 && inputList.value.length === 0) {
+            listFriends.push(data);
+            allFriends.forEach(el => {
+                let fullName = `${el.last_name} ${el.first_name}`;
 
-            if (str === data) {
-                moveFriendToArray(allFriends, filterFriends, listFriends, filterListFriends, data);
-            }
-        })
+                if (fullName === nameFriendSend) {
+                    let idx = allFriends.indexOf(el);
+
+                    if (idx !== -1) {
+                        allFriends.splice(idx, 1);
+                    }
+                }
+            });
+            filterFriends.forEach(el => {
+                let fullName = `${el.last_name} ${el.first_name}`;
+
+                if (fullName === nameFriendSend) {
+                    let idx = filterFriends.indexOf(el);
+
+                    if (idx !== -1) {
+                        filterFriends.splice(idx, 1);
+                    }
+                }
+            });
+        } else if (input.value.length === 0 && inputList.value.length === 0) {
+            listFriends.push(data);
+            allFriends.forEach(el => {
+                let fullName = `${el.last_name} ${el.first_name}`;
+
+                if (fullName === nameFriendSend) {
+                    let idx = allFriends.indexOf(el);
+
+                    if (idx !== -1) {
+                        allFriends.splice(idx, 1);
+                    }
+                }
+            });
+        } else if (input.value.length === 0 && inputList.value.length > 0) {
+            listFriends.push(data);
+            allFriends.forEach(el => {
+                let fullName = `${el.last_name} ${el.first_name}`;
+
+                if (fullName === nameFriendSend) {
+                    let idx = allFriends.indexOf(el);
+
+                    if (idx !== -1) {
+                        allFriends.splice(idx, 1);
+                    }
+                }
+            });
+
+            isMatching(listFriends, inputList)
+
+        } else if (input.value.length > 0 && inputList.value.length > 0) {
+            listFriends.push(data);
+            allFriends.forEach(el => {
+                let fullName = `${el.last_name} ${el.first_name}`;
+
+                if (fullName === nameFriendSend) {
+                    let idx = allFriends.indexOf(el);
+
+                    if (idx !== -1) {
+                        allFriends.splice(idx, 1);
+                    }
+                }
+            });
+            filterFriends.forEach(el => {
+                let fullName = `${el.last_name} ${el.first_name}`;
+
+                if (fullName === nameFriendSend) {
+                    let idx = filterFriends.indexOf(el);
+
+                    if (idx !== -1) {
+                        filterFriends.splice(idx, 1);
+                    }
+                }
+            });
+
+            isMatching(listFriends, inputList);
+
+        }
+    } else if (e.target.className === 'friend-list' && dragableBlock === 'friend-sorted') {
+        if (inputList.value.length > 0 && input.value.length === 0) {
+            allFriends.push(data);
+            listFriends.forEach(el => {
+                let fullName = `${el.last_name} ${el.first_name}`;
+
+                if (fullName === nameFriendSend) {
+                    let idx = listFriends.indexOf(el);
+
+                    if (idx !== -1) {
+                        listFriends.splice(idx, 1);
+                    }
+                }
+            });
+            filterListFriends.forEach(el => {
+                let fullName = `${el.last_name} ${el.first_name}`;
+
+                if (fullName === nameFriendSend) {
+                    let idx = filterListFriends.indexOf(el);
+
+                    if (idx !== -1) {
+                        filterListFriends.splice(idx, 1);
+                    }
+                }
+            });
+        } else if (inputList.value.length === 0 && input.value.length === 0) {
+            allFriends.push(data);
+            listFriends.forEach(el => {
+                let fullName = `${el.last_name} ${el.first_name}`;
+
+                if (fullName === nameFriendSend) {
+                    let idx = listFriends.indexOf(el);
+
+                    if (idx !== -1) {
+                        listFriends.splice(idx, 1);
+                    }
+                }
+            });
+        } else if (inputList.value.length === 0 && input.value.length > 0) {
+            allFriends.push(data);
+            listFriends.forEach(el => {
+                let fullName = `${el.last_name} ${el.first_name}`;
+
+                if (fullName === nameFriendSend) {
+                    let idx = listFriends.indexOf(el);
+
+                    if (idx !== -1) {
+                        listFriends.splice(idx, 1);
+                    }
+                }
+            });
+
+            isMatching(allFriends, input);
+
+        } else if (inputList.value.length > 0 && input.value.length > 0) {
+            allFriends.push(data);
+            listFriends.forEach(el => {
+                let fullName = `${el.last_name} ${el.first_name}`;
+
+                if (fullName === nameFriendSend) {
+                    let idx = listFriends.indexOf(el);
+
+                    if (idx !== -1) {
+                        listFriends.splice(idx, 1);
+                    }
+                }
+            });
+            filterListFriends.forEach(el => {
+                let fullName = `${el.last_name} ${el.first_name}`;
+
+                if (fullName === nameFriendSend) {
+                    let idx = filterListFriends.indexOf(el);
+
+                    if (idx !== -1) {
+                        filterListFriends.splice(idx, 1);
+                    }
+                }
+            });
+
+            isMatching(allFriends, input);
+
+        }
     }
-    if (inputList.value.length > 0) {
-        renderList(filterListFriends);
-    } else {
-        renderList(listFriends);
-    }
-    if (input.value.length > 0) {
-        render(filterFriends);
-    } else {
-        render(allFriends);
-    }
-});
+
+    render(allFriends, filterFriends, listFriends, filterListFriends);
+
+}, false);
 
 // /*Сохранение в localStorage*/
 save.addEventListener('click', () => {
-    localStorage.clear();
-    if (listFriends.length > 0) {
-        localStorage.data = JSON.stringify(listFriends);
+    if(localStorage.getItem('data')){
+        localStorage.removeItem('data')
     }
-    alert ('Сохранено');
+    if (listFriends.length > 0) {
+        localStorage.setItem('data', JSON.stringify(listFriends));
+    }
+    alert('Сохранено');
 });
