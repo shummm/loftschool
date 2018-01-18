@@ -1,0 +1,163 @@
+@import url('https://fonts.googleapis.com/css?family=Fira+Sans');
+
+* {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    box-sizing: border-box;
+    font-size: 12px;
+    font-family: 'Fira Sans', sans-serif;
+    outline: none;
+}
+
+/*------scroll-------*/
+::-webkit-scrollbar {
+    width: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c4c4c4;
+}
+
+.popup-link a{
+    color: red;
+    width: 250px;
+    clear: both;
+    cursor: hand;
+}
+.popup-link a:hover {
+    color: white;
+    background-color: red;
+    clear: both;
+}
+.popup-link p{
+    padding-top: 20px;
+}
+/**/
+#popup {
+    width: 380px !important;
+    height: 527px !important;
+    border-radius: 15px;
+    display: none;
+    z-index: 9999;
+    background: white;
+    position: absolute;
+    transform: translate(-50%, -100%);
+}
+
+.head {
+    height: 44px;
+    padding: 15px;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    background-color: #ff8663;
+    color: #ffffff;
+}
+
+.fa-map-marker {
+    float: left;
+}
+
+.head p {
+    margin-left: 5px;
+    width: 320px;
+    float: left;
+}
+
+.fa-times {
+    float: right;
+}
+
+/**/
+.message-block {
+    height: 125px;
+    margin: 15px;
+    overflow: auto;
+}
+
+.message {
+    margin-bottom: 27px;
+}
+
+.message-head {
+}
+
+#author {
+    font-weight: bold;
+    float: left;
+}
+
+.message-head p {
+    color: #7b7b7b;
+    margin-left: 10px;
+    float: left;
+}
+
+.message-body {
+    clear: both;
+}
+
+.message-body p {
+    padding-top: 13px;
+}
+
+/**/
+.feedback {
+    height: 266px;
+    border-top: 1px solid #f0f0f0;
+    margin-left: 15px;
+    margin-right: 15px;
+}
+
+.feedback-head p {
+    padding-top: 15px;
+    color: #ff8663;
+    font-weight: bold;
+}
+
+.feedback-author input {
+    width: 350px;
+    margin-top: 15px;
+    border: 1px solid #7b7b7b;
+    border-radius: 15px;
+    height: 32px;
+    padding-left: 15px;
+}
+
+.feedback-place input {
+    width: 350px;
+    border: 1px solid #7b7b7b;
+    border-radius: 15px;
+    height: 33px;
+    margin-top: 15px;
+    padding-left: 15px;
+}
+
+.feedback-text textarea {
+    width: 350px;
+    border: 1px solid #7b7b7b;
+    border-radius: 15px;
+    height: 124px;
+    padding: 10px 15px 15px 15px;
+    margin-top: 15px;
+    resize: none;
+}
+
+/**/
+#add {
+    height: 30px;
+    width: 87px;
+    margin: 15px;
+    background-color: #ff8663;
+    color: #ffffff;
+    border-radius: 10px;
+    float: right;
+}
+
+#map {
+    width: 100%;
+    height: 100vh;
+    padding: 0;
+    margin: 0;
+    /*position:absolute;*/
+}

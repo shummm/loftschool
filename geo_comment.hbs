@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>geo_comment</title>
+    <link rel="stylesheet" href="css/main_geo.css">
+    <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+</head>
+<body>
+
+<div id="map"></div>
+
+<div id="popup">
+    <div class="head">
+        <i class="fa fa-map-marker" aria-hidden="true"></i>
+        <p id="address">Адрес точки</p>
+        <i class="fa fa-times" id="close"></i>
+    </div>
+    <div class="message-block">
+
+        <div class="message">
+            <div class="message-head">
+                <span id="author">Автор</span>
+                <p>Название точки Дата</p>
+            </div>
+            <div class="message-body">
+                <p>Текст сообщения</p>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="feedback">
+        <div class="feedback-head">
+            <p>ВАШ ОТЗЫВ</p>
+        </div>
+        <div class="feedback-author">
+            <input type="text" name="author" placeholder="Ваше имя"/>
+        </div>
+        <div class="feedback-place">
+            <input type="text" name="place" placeholder="Укажите место"/>
+        </div>
+        <div class="feedback-text">
+            <textarea name="text" placeholder="Поделитесь впечатлениями"></textarea>
+        </div>
+    </div>
+    <button id="add">Добавить</button>
+</div>
+
+<script type="text/javascript" src ="src/geo_comment.js"></script>
+</body>
+</html>
